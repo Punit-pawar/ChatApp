@@ -1,79 +1,74 @@
 import React, { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ email, password });
+    setLoading(true);
+
+    const toastId = toast.loading("Logging in...");
+
+    try {
+      const res = await axios.post(
+        "http://localhost:4500/api/user/login", // ✅ FIXED
+        { email, password }
+      );
+
+      toast.success(res.data.message || "Login successful", {
+        id: toastId,
+      });
+
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      navigate("/dashboard");
+
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Server error",
+        { id: toastId }
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
-      
-      <div className="w-full max-w-md card bg-base-100 shadow-xl border border-base-300">
-        <div className="card-body">
+    <div className="min-h-screen flex items-center justify-center bg-base-200">
+      <form onSubmit={handleSubmit} className="card bg-base-100 p-6 w-96">
+        <h1 className="text-2xl font-bold text-center">Chat Verse 💬</h1>
 
-          {/* App Title */}
-          <h1 className="text-3xl font-bold text-center text-base-content">
-            Chat Verse 💬
-          </h1>
-          <p className="text-center text-base-content/70 mb-4">
-            Login to continue chatting
-          </p>
+        <input
+          type="email"
+          placeholder="Email"
+          className="input input-bordered w-full mt-4"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            
-            {/* Email */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input input-bordered w-full"
-                required
-              />
-            </div>
+        <input
+          type="password"
+          placeholder="Password"
+          className="input input-bordered w-full mt-3"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-            {/* Password */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input input-bordered w-full"
-                required
-              />
-            </div>
-
-            {/* Login Button */}
-            <button type="submit" className="btn btn-primary w-full mt-4">
-              Login
-            </button>
-          </form>
-
-          {/* Footer */}
-          <p className="text-center text-sm text-base-content/70 mt-4">
-            Don’t have an account?{" "}
-            <span className="font-semibold cursor-pointer hover:underline">
-              Sign up
-            </span>
-            
-          </p>
-
-        </div>
-      </div>
-
+        <button
+          type="submit"
+          className="btn btn-primary w-full mt-4"
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
     </div>
   );
 };

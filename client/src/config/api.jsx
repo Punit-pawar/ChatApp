@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-const axiosInstance = axios.create({
-    baseURL:"http://localhost:4500",
-    withCredentials:true,
-})
+const res = await axios.post(
+  "http://localhost:4500/api/user/login",
+  { email, password },
+  { withCredentials: true }
+);
+
 
 export default axiosInstance;
