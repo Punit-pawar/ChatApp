@@ -19,7 +19,7 @@ const Navbar = () => {
   return (
     <div className="bg-primary flex justify-between items-center px-5 py-2">
       
-      <h1 className="text-xl font-bold">Chat Verse</h1>
+      <h1 className="text-xl font-bold italic">Chat Verse</h1>
 
       <div className="flex gap-4">
         <span className="cursor-pointer">Home</span>

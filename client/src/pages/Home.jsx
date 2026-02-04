@@ -41,11 +41,10 @@ const Home = () => {
       <section className="relative flex flex-col items-center justify-center text-center px-6 py-28">
 
         {/* Animated blobs */}
-        <div className="absolute w-80 h-80 bg-primary opacity-20 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
-        <div className="absolute w-96 h-96 bg-secondary opacity-20 rounded-full blur-3xl bottom-10 right-10 animate-ping"></div>
+        <div className="absolute w-80 h-80 bg-primary opacity-20 rounded-full blur-3xl top-10 left-10 animate-pulse flex ms-140"></div>
 
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight animate-slide-up">
-          <span className="block">Chat Smarter.</span>
+          <span className="block">Chat Verse.</span>
           <span className="text-primary h-16 inline-block">
             {text}
             <span className="animate-blink">|</span>
