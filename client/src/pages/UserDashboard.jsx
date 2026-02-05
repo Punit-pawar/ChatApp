@@ -24,6 +24,7 @@ const UserDashboard = () => {
 
   return (
     <div className="min-h-screen bg-base-200 flex">
+      
 
       {/* Sidebar */}
       <aside className="w-64 bg-base-100 border-r border-base-300 hidden md:flex flex-col">
