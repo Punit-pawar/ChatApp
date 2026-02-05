@@ -18,10 +18,19 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
     },
+
+    googleId: {
+      type: String,
+    },
+
+    userType:{
+      type:String,
+      enum: ["google","regular","hybrid"]
+      
+    }
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = mongoose.model("User", userSchema);

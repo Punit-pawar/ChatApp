@@ -5,15 +5,15 @@ export const Protect = async (req, res, next) => {
     const Chat = req.cookies.ChatVerse;
     console.log("Token recived in Cookies:", Chat);
 
-    const tea = jwt.verify(Chat, process.env.JWT_SECRET);
-    console.log(tea);
-    if (!tea) {
+    const Verse = jwt.verify(Chat, process.env.JWT_SECRET);
+    console.log(Verse);
+    if (!Verse) {
       const error = new Error("Unauthorized! Please Login Again");
       error.statusCode = 401;
       return next(error);
     }
 
-    const verifiedUser = await User.findById(tea.id);
+    const verifiedUser = await User.findById(Verse.id);
     if (!verifiedUser) {
       const error = new Error("Unauthorized! Please Login Again");
       error.statusCode = 401;

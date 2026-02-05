@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -12,60 +14,126 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      const res = await axios.post(
-        "http://localhost:5000/api/user/signup",
-        { name, email, phone, password }
-      );
+    const toastId = toast.loading("Creating account...");
 
-      alert(res.data.message);
+    try {
+      const res = await axiosInstance.post("/api/user/signup", {
+        name,
+        email,
+        phone,
+        password,
+      });
+
+      toast.success(res.data.message || "Account created 🎉", {
+        id: toastId,
+      });
 
       setName("");
       setEmail("");
       setPhone("");
       setPassword("");
-
     } catch (error) {
-      console.error("Signup error:", error);
-      alert(error?.response?.data?.message || "Server error");
+      toast.error(error?.response?.data?.message || "Signup failed", {
+        id: toastId,
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200">
-      <form onSubmit={handleSubmit} className="card bg-base-100 p-6 w-96 shadow-xl">
-        <h2 className="text-2xl font-bold text-center">Create Account 🚀</h2>
+    <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
+      <div className="w-full max-w-md">
+        <form
+          onSubmit={handleSubmit}
+          className="card bg-base-100 shadow-2xl border border-base-300"
+        >
+          <div className="card-body gap-4">
+            {/* Header */}
+            <div className="text-center">
+              <h2 className="text-3xl font-bold">Create Account 🚀</h2>
+              <p className="text-base-content/70 mt-1">
+                Join Chat Verse and start chatting
+              </p>
+            </div>
 
-        <input className="input input-bordered mt-3"
-          placeholder="Full Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+            {/* Full Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Full Name</span>
+              </label>
+              <input
+                className="input input-bordered"
+                placeholder="Lucky Pawar"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
 
-        <input className="input input-bordered mt-3"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+            {/* Email */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Email</span>
+              </label>
+              <input
+                type="email"
+                className="input input-bordered"
+                placeholder="luckypawar@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
 
-        <input className="input input-bordered mt-3"
-          placeholder="Phone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
+            {/* Phone */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Phone</span>
+              </label>
+              <input
+                className="input input-bordered"
+                placeholder="0000000000"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </div>
 
-        <input type="password" className="input input-bordered mt-3"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+            {/* Password */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Password</span>
+              </label>
+              <input
+                type="password"
+                className="input input-bordered"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
 
-        <button className="btn btn-primary mt-4" disabled={loading}>
-          {loading ? "Creating..." : "Sign Up"}
-        </button>
-      </form>
+            {/* Signup Button */}
+            <button
+              type="submit"
+              className="btn btn-primary w-full mt-2"
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Sign Up"}
+            </button>
+
+            {/* Footer */}
+            <p className="text-center text-sm text-base-content/60 mt-2">
+              Already have an account?{" "}
+              <Link to="/login" className="link link-primary font-semibold">
+                Login
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
