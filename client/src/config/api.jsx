@@ -6,8 +6,6 @@ const res = await axios.post(
   { withCredentials: true }
 );
 
-
-
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -10,6 +10,8 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -17,25 +19,35 @@ const Signup = () => {
     const toastId = toast.loading("Creating account...");
 
     try {
-      const res = await axiosInstance.post("/api/user/signup", {
-        name,
-        email,
-        phone,
-        password,
-      });
+      const res = await axios.post(
+        "http://localhost:4500/api/user/signup",
+        {
+          name,
+          email,
+          phone,
+          password,
+        }
+      );
 
       toast.success(res.data.message || "Account created 🎉", {
         id: toastId,
       });
 
+      // optional: auto redirect to login
+      navigate("/login");
+
       setName("");
       setEmail("");
       setPhone("");
       setPassword("");
+
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Signup failed", {
-        id: toastId,
-      });
+      console.error("SIGNUP ERROR 👉", error);
+
+      toast.error(
+        error?.response?.data?.message || "Signup failed",
+        { id: toastId }
+      );
     } finally {
       setLoading(false);
     }
@@ -49,88 +61,63 @@ const Signup = () => {
           className="card bg-base-100 shadow-2xl border border-base-300"
         >
           <div className="card-body gap-4">
-            {/* Header */}
+
             <div className="text-center">
               <h2 className="text-3xl font-bold">Create Account 🚀</h2>
-              <p className="text-base-content/70 mt-1">
+              <p className="text-base-content/70">
                 Join Chat Verse and start chatting
               </p>
             </div>
 
-            {/* Full Name */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Full Name</span>
-              </label>
-              <input
-                className="input input-bordered"
-                placeholder="Lucky Pawar"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
+            <input
+              className="input input-bordered"
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
 
-            {/* Email */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                className="input input-bordered"
-                placeholder="luckypawar@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+            <input
+              type="email"
+              className="input input-bordered"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-            {/* Phone */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Phone</span>
-              </label>
-              <input
-                className="input input-bordered"
-                placeholder="0000000000"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
-            </div>
+            <input
+              className="input input-bordered"
+              placeholder="Phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+            />
 
-            {/* Password */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                className="input input-bordered"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+            <input
+              type="password"
+              className="input input-bordered"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-            {/* Signup Button */}
             <button
               type="submit"
-              className="btn btn-primary w-full mt-2"
+              className="btn btn-primary w-full"
               disabled={loading}
             >
               {loading ? "Creating..." : "Sign Up"}
             </button>
 
-            {/* Footer */}
-            <p className="text-center text-sm text-base-content/60 mt-2">
+            <p className="text-center text-sm opacity-70">
               Already have an account?{" "}
-              <Link to="/login" className="link link-primary font-semibold">
+              <Link to="/login" className="link link-primary">
                 Login
               </Link>
             </p>
+
           </div>
         </form>
       </div>
