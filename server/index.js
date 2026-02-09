@@ -1,22 +1,20 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import userRoutes from "./src/routes/userRoutes.js"; // adjust if needed
-
-dotenv.config();
+import connectDB from "./src/config/db.js";
+import userRoutes from "./src/routes/userRoutes.js"
 
 const app = express();
 
-app.use(cors({
-  origin: "http://localhost:5173", // or 3000 depending on Vite/CRA
-  credentials: true,
-}));
+// connect database
+connectDB();
 
-app.use(express.json()); // 🔥 REQUIRED
+app.use(cors());
+app.use(express.json());
 
+// routes
 app.use("/api/user", userRoutes);
 
 const PORT = 4500;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} 🚀`);
+  console.log(`✅ Server running on http://localhost:${PORT}`);
 });

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import ScrollVelocity from "../component/ScrollVelocity"
 
 const words = ["Chat.", "Connect.", "Collaborate."];
 
@@ -22,9 +23,12 @@ const Home = () => {
       return;
     }
 
-    const timeout = setTimeout(() => {
-      setSubIndex((prev) => prev + (reverse ? -1 : 1));
-    }, reverse ? 40 : 90);
+    const timeout = setTimeout(
+      () => {
+        setSubIndex((prev) => prev + (reverse ? -1 : 1));
+      },
+      reverse ? 40 : 90,
+    );
 
     return () => clearTimeout(timeout);
   }, [subIndex, index, reverse]);
@@ -35,11 +39,8 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-base-200 overflow-hidden">
-
-
       {/* HERO */}
       <section className="relative flex flex-col items-center justify-center text-center px-6 py-28">
-
         {/* Animated blobs */}
         <div className="absolute w-80 h-80 bg-primary opacity-20 rounded-full blur-3xl top-10 left-10 animate-pulse flex ms-140"></div>
 
@@ -52,18 +53,26 @@ const Home = () => {
         </h1>
 
         <p className="mt-6 max-w-xl text-lg text-base-content/70 animate-fade-in delay-200">
-          A modern chat platform built for speed, security, and style.
-          Stay connected anytime, anywhere.
+          A modern chat platform built for speed, security, and style. Stay
+          connected anytime, anywhere.
         </p>
 
         <div className="mt-10 flex gap-4 animate-slide-up delay-300">
           <Link to="/signup" className="btn btn-primary btn-lg">
-            Start Chatting 🚀
+            Start Chatting 
           </Link>
           <Link to="/login" className="btn btn-outline btn-lg">
             Login
           </Link>
         </div>
+      </section>
+
+      <section>
+        <ScrollVelocity
+          texts={["CHAT", "VERSE"]}
+          velocity={50}
+          className="custom-scroll-text"
+        />
       </section>
 
       {/* FEATURES */}
@@ -73,11 +82,22 @@ const Home = () => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-
           {[
-            { icon: "⚡", title: "Real-time Chat", desc: "Instant, lightning-fast message delivery." },
-            { icon: "🔐", title: "Secure", desc: "Encrypted & privacy-first conversations." },
-            { icon: "🎨", title: "Beautiful UI", desc: "Looks stunning in every theme." },
+            {
+              icon: "⚡",
+              title: "Real-time Chat",
+              desc: "Instant, lightning-fast message delivery.",
+            },
+            {
+              icon: "🔐",
+              title: "Secure",
+              desc: "Encrypted & privacy-first conversations.",
+            },
+            {
+              icon: "🎨",
+              title: "Beautiful UI",
+              desc: "Looks stunning in every theme.",
+            },
           ].map((item, i) => (
             <div
               key={i}
@@ -91,7 +111,6 @@ const Home = () => {
               </div>
             </div>
           ))}
-
         </div>
       </section>
 
@@ -104,11 +123,8 @@ const Home = () => {
           Join ChatVerse and experience a new way to chat.
         </p>
 
-        <Link
-          to="/signup"
-          className="btn btn-primary btn-lg animate-bounce"
-        >
-          Create Free Account 🚀
+        <Link to="/signup" className="btn btn-primary btn-lg animate-bounce">
+          Create Free Account 
         </Link>
       </section>
 

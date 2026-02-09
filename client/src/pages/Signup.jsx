@@ -63,7 +63,7 @@ const Signup = () => {
           <div className="card-body gap-4">
 
             <div className="text-center">
-              <h2 className="text-3xl font-bold">Create Account 🚀</h2>
+              <h2 className="text-3xl font-bold">Create Account </h2>
               <p className="text-base-content/70">
                 Join Chat Verse and start chatting
               </p>
