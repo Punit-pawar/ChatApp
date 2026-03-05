@@ -229,11 +229,11 @@ const UserDashboard = () => {
   const handleClearChat = () => {
     setMessages([{
       id: Date.now(),
-      text: "Chat cleared. Fresh start! How can I help you? ✨",
+      text: "Chat cleared. Fresh start! How can I help you? ",
       sender: "system",
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     }]);
-    toast("Chat cleared", { icon: "✨", duration: 1500 });
+    toast("Chat cleared", { icon: "", duration: 1500 });
   };
 
   /* ===== AVATAR UPLOAD ===== */

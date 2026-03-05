@@ -113,7 +113,7 @@ const Login = () => {
     try {
       const res = await axios.post("http://localhost:4500/api/user/login", { email, password });
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      toast.success("Welcome back! ✨", { id });
+      toast.success("Welcome back!", { id });
       navigate("/dashboard");
     } catch (err) {
       toast.error(err?.response?.data?.message || "Invalid credentials", { id });

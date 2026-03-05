@@ -219,9 +219,9 @@ const Navbar = () => {
               <div className="flex-1 p-6 flex flex-col gap-3 overflow-y-auto">
                 {[
                   { to: "/", label: "🏠 Home" },
-                  { to: "/dashboard", label: "📊 Dashboard" },
-                  { to: "/login", label: "🔑 Login" },
-                  { to: "/signup", label: "✨ Sign Up" },
+                  { to: "/dashboard", label: " Dashboard" },
+                  { to: "/login", label: " Login" },
+                  { to: "/signup", label: " Sign Up" },
                 ].map(({ to, label }, i) => (
                   <motion.div
                     key={to}

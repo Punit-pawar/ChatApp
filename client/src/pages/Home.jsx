@@ -177,25 +177,10 @@ const Home = () => {
           style={{ background: "radial-gradient(circle, var(--color-accent), transparent 70%)" }} />
         <div className="orb w-[300px] h-[300px] top-[40%] right-[20%] opacity-10"
           style={{ background: "radial-gradient(circle, var(--color-secondary), transparent 70%)" }} />
-
-        {/* Particles */}
-        {particles.map((p, i) => <Particle key={i} style={p} />)}
-
         {/* HUD grid overlay */}
         <div className="absolute inset-0 hud-grid opacity-30 pointer-events-none" />
 
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative z-10 max-w-5xl mx-auto">
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-white/60 mb-8 backdrop-blur-sm"
-          >
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_#4ade80]" />
-            Now live — AI-powered conversations
-            <FiArrowRight size={14} />
-          </motion.div>
 
           {/* Main heading */}
           <motion.h1
@@ -247,36 +232,6 @@ const Home = () => {
               </motion.button>
             </Link>
           </motion.div>
-
-          {/* Trust indicators */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-14 flex flex-wrap justify-center items-center gap-6 text-white/30 text-sm"
-          >
-            {["No credit card required", "Free forever plan", "Cancel anytime"].map((t, i) => (
-              <span key={i} className="flex items-center gap-1.5">
-                <FiCheck size={14} className="text-green-400" /> {t}
-              </span>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/20 text-xs"
-        >
-          <div className="w-6 h-10 rounded-full border border-white/20 flex items-start justify-center p-1.5">
-            <motion.div
-              animate={{ y: [0, 14, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-1.5 h-1.5 rounded-full bg-white/40"
-            />
-          </div>
-          Scroll
         </motion.div>
       </section>
 
@@ -287,8 +242,6 @@ const Home = () => {
             <React.Fragment key={i}>
               <span>CHAT</span><span className="text-primary/30">✦</span>
               <span>VERSE</span><span className="text-accent/30">✦</span>
-              <span>CONNECT</span><span className="text-secondary/30">✦</span>
-              <span>SECURE</span><span className="text-primary/30">✦</span>
             </React.Fragment>
           ))}
         </div>
@@ -401,26 +354,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ===== TESTIMONIALS ===== */}
-      <section className="py-24 px-6">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-14"
-          >
-            <span className="text-xs font-bold uppercase tracking-[0.3em] text-secondary/60 mb-4 block">Loved by thousands</span>
-            <h2 className="text-5xl font-black text-white leading-tight">
-              What people are <span className="gradient-text">saying</span>
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => <TestimonialCard key={i} {...t} />)}
-          </div>
-        </div>
-      </section>
 
       {/* ===== CTA SECTION ===== */}
       <section className="py-28 px-6 relative overflow-hidden">
