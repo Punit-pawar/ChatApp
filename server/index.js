@@ -1,98 +1,62 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch";
-import connectDB from "./src/config/db.js";
-import userRoutes from "./src/routes/userRoutes.js";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import connectDB from "./src/config/db.js";
+import AuthRouter from "./src/routers/authRouter.js";
+import morgan from "morgan";
+
 dotenv.config();
 
 const app = express();
 
-// Connect Database
-connectDB();
+// Middlewares
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(morgan("dev"));
 
 // Routes
-app.use("/api/user", userRoutes);
+app.use("/auth", AuthRouter);
 
-console.log("Loaded HF Key:", process.env.HF_API_KEY);
+// Health check (optional but recommended)
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "API is running 🚀" });
+}); 
 
-/* ================= AI CHAT ROUTE ================= */
-const MODEL_URL =
-  "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2";
+// Global error handler
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
 
-app.post("/api/chat", async (req, res) => {
-  const { message } = req.body;
+  console.error("❌ Error:", err);
 
-  if (!message) {
-    return res.status(400).json({ error: "Message is required" });
-  }
+  res.status(statusCode).json({
+    success: false,
+    message,
+  });
+});
 
-  const prompt = `<s>[INST] You are the ChatVerse System Construct, an advanced cyberpunk AI.
-Respond concisely and coldly using tech terminology. Keep responses under 3 sentences.
-Operator: ${message} [/INST]`;
+// Start server ONLY after DB connects
+const PORT = process.env.PORT || 5000;
 
+const startServer = async () => {
   try {
-    const response = await fetch(MODEL_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.HF_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        inputs: prompt,
-        parameters: {
-          max_new_tokens: 100,
-          temperature: 0.7,
-        },
-      }),
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
     });
-
-    // Handle HTTP errors
-    if (!response.ok) {
-      const errorText = await response.text();
-    
-      console.log("====== HUGGING FACE ERROR ======");
-      console.log("Status:", response.status);
-      console.log("Response:", errorText);
-      console.log("================================");
-    
-      return res.status(response.status).json({
-        error: `HF API Error ${response.status}`,
-      });
-    }
-
-    const data = await response.json();
-
-    if (data[0]?.generated_text) {
-      const fullText = data[0].generated_text;
-      const reply =
-        fullText.split("[/INST]")[1]?.trim() ||
-        "Transmission corrupted. Retry.";
-
-      return res.json({ reply });
-    }
-
-    if (data.error && data.estimated_time) {
-      return res.json({
-        reply: `System booting. Estimated time: ${Math.round(
-          data.estimated_time
-        )} seconds.`,
-      });
-    }
-
-    res.json({ reply: "Neural link unstable. Retry." });
   } catch (error) {
-    console.error("SERVER ERROR:", error);
-    res.status(500).json({ error: "Server failure" });
+    console.error("❌ Failed to connect DB", error.message);
+    process.exit(1);
   }
-});
+};
 
-/* ================= START SERVER ================= */
-const PORT = 4500;
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-});
+startServer();

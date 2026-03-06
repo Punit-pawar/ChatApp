@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
+import Navbar from "./components/Navbar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Home from "./pages/Home";
-import Signup from "./pages/Signup";
-import UserDashboard from "./pages/UserDashboard";
+import Chating from "./pages/Chating";
+import About from "./pages/About";
 
 const App = () => {
   return (
@@ -14,10 +15,14 @@ const App = () => {
         <Toaster />
         <Navbar />
         <Routes>
+          
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<UserDashboard />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/chatting" element={<Chating />} />
+
+          
         </Routes>
       </BrowserRouter>
     </>
