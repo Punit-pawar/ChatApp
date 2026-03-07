@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import api from "../../config/api";
 
 const DummyRecentContact = [
-  { id: 1, name: "Amit Sharma", email: "amit.sharma@example.com", contactNumber: "9876543210" },
-  { id: 2, name: "Priya Verma", email: "priya.verma@example.com", contactNumber: "9876501234" },
-  { id: 3, name: "Rahul Singh", email: "rahul.singh@example.com", contactNumber: "9123456780" },
-  { id: 4, name: "Sneha Gupta", email: "sneha.gupta@example.com", contactNumber: "9988776655" },
-  { id: 5, name: "Vikram Patel", email: "vikram.patel@example.com", contactNumber: "9898989898" }
-];
-
-const DummyAllContact = [
-  { id: 11, name: "Ankit Tiwari", email: "ankit.tiwari@example.com", contactNumber: "9876012345" },
-  { id: 12, name: "Ritika Saxena", email: "ritika.saxena@example.com", contactNumber: "9811122233" },
-  { id: 13, name: "Manish Yadav", email: "manish.yadav@example.com", contactNumber: "9822334455" },
-  { id: 14, name: "Deepak Choudhary", email: "deepak.choudhary@example.com", contactNumber: "9833445566" },
-  { id: 15, name: "Shalini Mishra", email: "shalini.mishra@example.com", contactNumber: "9844556677" }
+  { id: 1, fullName: "Amit Sharma", email: "amit.sharma@example.com", mobileNumber: "9876543210" },
+  { id: 2, fullName: "Priya Verma", email: "priya.verma@example.com", mobileNumber: "9876501234" },
+  { id: 3, fullName: "Rahul Singh", email: "rahul.singh@example.com", mobileNumber: "9123456780" },
+  { id: 4, fullName: "Sneha Gupta", email: "sneha.gupta@example.com", mobileNumber: "9988776655" },
+  { id: 5, fullName: "Vikram Patel", email: "vikram.patel@example.com", mobileNumber: "9898989898" },
+  { id: 6, fullName: "Neha Joshi", email: "neha.joshi@example.com", mobileNumber: "9812345678" },
+  { id: 7, fullName: "Arjun Mehta", email: "arjun.mehta@example.com", mobileNumber: "9001122334" },
+  { id: 8, fullName: "Kavita Nair", email: "kavita.nair@example.com", mobileNumber: "9012345678" },
+  { id: 9, fullName: "Rohit Agarwal", email: "rohit.agarwal@example.com", mobileNumber: "9090909090" },
+  { id: 10, fullName: "Pooja Kapoor", email: "pooja.kapoor@example.com", mobileNumber: "9887766554" }
 ];
 
 const ContactBar = ({ fetchMode, setReceiver }) => {
@@ -22,22 +20,31 @@ const ContactBar = ({ fetchMode, setReceiver }) => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchContacts = () => {
+  const fetchContacts = async () => {
+
     setLoading(true);
 
     try {
-      setTimeout(() => {
 
-        setLoading(false);
+      let res;
 
-        if (fetchMode === "RC") setContacts(DummyRecentContact);
-        else if (fetchMode === "AC") setContacts(DummyAllContact);
-        else setContacts([]);
+      if (fetchMode === "RC") {
+        setContacts(DummyRecentContact);
+      }
 
-      }, 1000);
+      else if (fetchMode === "AC") {
+        res = await api.get("/user/allUsers");
+        setContacts(res.data.data);
+      }
+
+      else {
+        setContacts([]);
+      }
 
     } catch (error) {
       toast.error("Failed to load contacts.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,7 +80,7 @@ const ContactBar = ({ fetchMode, setReceiver }) => {
           <div className="card-body p-4">
 
             <h3 className="font-semibold text-base-content">
-              {contact.name}
+              {contact.fullName}
             </h3>
 
             <p className="text-sm text-base-content opacity-70">
@@ -81,7 +88,7 @@ const ContactBar = ({ fetchMode, setReceiver }) => {
             </p>
 
             <p className="text-sm font-medium text-base-content">
-              {contact.contactNumber}
+              {contact.mobileNumber}
             </p>
 
           </div>

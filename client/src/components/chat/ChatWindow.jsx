@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const DummyChatData = [
   { senderId: 1, receiverId: 2, message: "Hi, how are you?" },
@@ -23,7 +24,56 @@ const DummyChatData = [
   { senderId: 2, receiverId: 1, message: "Let's discuss it in the evening then." },
 ];
 
-const ChatWindow = ({ receiver }) => {
+const ChatWindow = ({ receiver, setReceiver }) => {
+  const bottomRef = useRef(null);
+
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState("");
+
+  const scrolltoBottom = () => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Auto scroll on new message
+  useEffect(() => {
+    scrolltoBottom();
+  }, [messages]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  };
+
+  const handleSend = () => {
+    if (!inputMessage.trim()) return;
+
+    const messagePacket = {
+      senderId: 1,
+      receiverId: 2,
+      message: inputMessage,
+    };
+
+    setMessages((prev) => [...prev, messagePacket]);
+    setInputMessage("");
+  };
+
+  const fetchAllOldMessage = () => {
+    try {
+      setTimeout(() => {
+        setMessages(DummyChatData);
+      }, 1000);
+    } catch (error) {
+      toast.error("Some Error");
+    }
+  };
+
+  // Load messages when receiver changes
+  useEffect(() => {
+    setMessages([]);
+    if (receiver) fetchAllOldMessage();
+  }, [receiver]);
+
   if (!receiver) {
     return (
       <div className="p-2 h-full flex items-center justify-center bg-base-200 transition-colors duration-300">
@@ -43,41 +93,54 @@ const ChatWindow = ({ receiver }) => {
           {/* Header */}
           <div className="bg-primary p-3 rounded-lg mb-2 shadow-md transition-all duration-300 hover:shadow-lg">
             <h2 className="text-lg font-bold text-primary-content tracking-wide">
-              {receiver.name}
+              {receiver.fullName}
             </h2>
           </div>
 
           {/* Messages */}
           <div className="h-4/5 overflow-y-auto p-2 border border-base-300 rounded-lg bg-accent/30 space-y-1">
 
-            {DummyChatData.map((chat, idx) => (
-              <div
-                key={idx}
-                className={`chat ${
-                  chat.senderId === 2 ? "chat-receiver" : "chat-sender"
-                } transition-all duration-200`}
-              >
-                <div className="chat-header text-base-content opacity-70 text-xs">
-                  {chat.senderId === 2 ? receiver.name : "Arpit Gupta"}
-                </div>
+            {messages.length > 0 ? (
+              messages.map((chat, idx) => (
+                <div
+                  key={idx}
+                  className={`chat ${
+                    chat.senderId === 2 ? "chat-receiver" : "chat-sender"
+                  } transition-all duration-200`}
+                >
+                  <div className="chat-header text-base-content opacity-70 text-xs">
+                    {chat.senderId === 2 ? receiver.fullName : "Arpit Gupta"}
+                  </div>
 
-                <div className="chat-bubble shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200">
-                  {chat.message}
+                  <div className="chat-bubble shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200">
+                    {chat.message}
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                Loading Chats ...
               </div>
-            ))}
+            )}
 
+            <div ref={bottomRef} />
           </div>
 
           {/* Input */}
           <div className="mt-2 flex gap-2">
             <input
               type="text"
+              value={inputMessage}
               placeholder="Type your message..."
               className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200"
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
 
-            <button className="btn btn-primary hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-md">
+            <button
+              className="btn btn-primary hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-md"
+              onClick={handleSend}
+            >
               Send
             </button>
           </div>
