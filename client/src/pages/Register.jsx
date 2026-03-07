@@ -83,23 +83,28 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
-      <div className="w-full max-w-xl">
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title text-3xl justify-center text-primary">
-              Register
-            </h2>
-            <p className="text-center text-base-content/70 mb-6">
-              Hello New User 🫡
-            </p>
+    <div className="min-h-screen flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-xl transform transition-all duration-500 hover:scale-[1.01]">
+        {/* Glassmorphism Card */}
+        <div className="card bg-base-100/90 backdrop-blur-md shadow-2xl border border-base-content/5">
+          <div className="card-body p-8">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <h2 className="text-4xl font-extrabold bg-primary bg-clip-text text-transparent inline-block pb-1">
+                Register
+              </h2>
+              <p className="text-base-content/70 flex items-center justify-center gap-2 mt-2 font-medium">
+                Hello New User 
+              </p>
+            </div>
 
+            {/* Form */}
             <form
               onSubmit={handleSubmit}
               onReset={handleClearForm}
               className="space-y-4"
             >
-              <div>
+              <div className="relative group">
                 <input
                   type="text"
                   name="fullName"
@@ -107,47 +112,63 @@ const Register = () => {
                   value={formData.fullName}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="input input-bordered w-full"
+                  className="input input-bordered w-full transition-all duration-300 focus:ring-2 focus:ring-primary/40 focus:border-primary group-hover:border-primary/50 bg-base-100"
                 />
                 {validationError.fullName && (
-                  <p className="text-error text-sm">
+                  <p className="text-error text-xs font-medium mt-1 ml-1 transition-all">
                     {validationError.fullName}
                   </p>
                 )}
               </div>
 
-              <input
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={isLoading}
-                className="input input-bordered w-full"
-              />
+              <div className="relative group">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email Address"
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className="input input-bordered w-full transition-all duration-300 focus:ring-2 focus:ring-primary/40 focus:border-primary group-hover:border-primary/50 bg-base-100"
+                />
+                {validationError.email && (
+                  <p className="text-error text-xs font-medium mt-1 ml-1 transition-all">
+                    {validationError.email}
+                  </p>
+                )}
+              </div>
 
-              <input
-                type="tel"
-                name="mobileNumber"
-                placeholder="Mobile Number"
-                maxLength="10"
-                value={formData.mobileNumber}
-                onChange={handleChange}
-                disabled={isLoading}
-                className="input input-bordered w-full"
-              />
+              <div className="relative group">
+                <input
+                  type="tel"
+                  name="mobileNumber"
+                  placeholder="Mobile Number"
+                  maxLength="10"
+                  value={formData.mobileNumber}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className="input input-bordered w-full transition-all duration-300 focus:ring-2 focus:ring-primary/40 focus:border-primary group-hover:border-primary/50 bg-base-100"
+                />
+                {validationError.mobileNumber && (
+                  <p className="text-error text-xs font-medium mt-1 ml-1 transition-all">
+                    {validationError.mobileNumber}
+                  </p>
+                )}
+              </div>
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Create Password"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={isLoading}
-                className="input input-bordered w-full"
-              />
+              <div className="relative group">
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Create Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className="input input-bordered w-full transition-all duration-300 focus:ring-2 focus:ring-primary/40 focus:border-primary group-hover:border-primary/50 bg-base-100"
+                />
+              </div>
 
-              <div>
+              <div className="relative group">
                 <input
                   type="password"
                   name="confirmPassword"
@@ -155,20 +176,21 @@ const Register = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="input input-bordered w-full"
+                  className="input input-bordered w-full transition-all duration-300 focus:ring-2 focus:ring-primary/40 focus:border-primary group-hover:border-primary/50 bg-base-100"
                 />
                 {validationError.confirmPassword && (
-                  <p className="text-error text-sm">
+                  <p className="text-error text-xs font-medium mt-1 ml-1 transition-all">
                     {validationError.confirmPassword}
                   </p>
                 )}
               </div>
 
-              <div className="flex gap-3 pt-6">
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-4">
                 <button
                   type="reset"
                   disabled={isLoading}
-                  className="btn btn-secondary btn-outline flex-1"
+                  className="btn btn-outline flex-1 transition-all duration-300 hover:bg-base-200 hover:-translate-y-1 hover:shadow-md"
                 >
                   Clear
                 </button>
@@ -176,16 +198,21 @@ const Register = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="btn btn-primary flex-1"
+                  className="btn border-none bg-primary text-white flex-1 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                 >
-                  {isLoading ? "Submitting..." : "Register"}
+                  {isLoading ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    "Register"
+                  )}
                 </button>
               </div>
             </form>
           </div>
         </div>
 
-        <p className="text-center text-sm text-base-content/60 mt-6">
+        {/* Footer */}
+        <p className="text-center text-sm text-base-content/60 mt-8 transition-opacity hover:opacity-100 opacity-70">
           We respect your privacy 🔒
         </p>
       </div>

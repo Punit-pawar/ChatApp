@@ -16,31 +16,21 @@ const DummyRecentContact = [
 ];
 
 const ContactBar = ({ fetchMode, setReceiver }) => {
-
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchContacts = async () => {
-
     setLoading(true);
-
     try {
-
       let res;
-
       if (fetchMode === "RC") {
         setContacts(DummyRecentContact);
-      }
-
-      else if (fetchMode === "AC") {
+      } else if (fetchMode === "AC") {
         res = await api.get("/user/allUsers");
         setContacts(res.data.data);
-      }
-
-      else {
+      } else {
         setContacts([]);
       }
-
     } catch (error) {
       toast.error("Failed to load contacts.");
     } finally {
@@ -52,49 +42,72 @@ const ContactBar = ({ fetchMode, setReceiver }) => {
     fetchContacts();
   }, [fetchMode]);
 
-  if (loading || contacts.length === 0) {
+  // Helper function for the dynamic avatar (UI only)
+  const getInitials = (name) => {
+    return name ? name.charAt(0).toUpperCase() : "?";
+  };
+
+  if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <span className="loading loading-dots loading-md text-primary"></span>
+      <div className="h-full p-3 overflow-y-auto space-y-4">
+        {[1, 2, 3, 4, 5, 6].map((n) => (
+          <div key={n} className="flex gap-4 items-center animate-pulse p-2">
+            <div className="w-12 h-12 rounded-full bg-base-content/10"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-base-content/10 rounded w-3/4"></div>
+              <div className="h-3 bg-base-content/10 rounded w-1/2"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (contacts.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-base-content/50 font-medium">
+        No contacts found.
       </div>
     );
   }
 
   return (
-    <div className="h-full p-3 overflow-y-auto space-y-3">
-
+    <div className="h-full p-3 overflow-y-auto space-y-2 custom-scrollbar">
       {contacts.map((contact) => (
         <div
-          key={contact.id}
+          key={contact.id || contact._id}
           onClick={() => setReceiver(contact)}
           className="
-          card bg-base-100 border border-base-300
-          shadow-sm hover:shadow-xl
-          hover:bg-base-200
-          hover:border-primary
-          hover:scale-[1.02]
-          cursor-pointer
-          transition-all duration-300
+            flex items-center gap-4 p-3 rounded-2xl
+            bg-base-100/60 backdrop-blur-md border border-transparent
+            shadow-sm transition-all duration-300 ease-out cursor-pointer group
+            hover:shadow-md hover:border-primary/30 hover:bg-primary/5 hover:scale-[1.02]
+            active:scale-[0.98]
           "
         >
-          <div className="card-body p-4">
+          {/* Avatar */}
+          <div className="relative flex-shrink-0">
+            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl shadow-inner group-hover:shadow-[0_0_15px_rgba(var(--fallback-p,var(--p)),0.4)] transition-all duration-300 group-hover:scale-110">
+              {getInitials(contact.fullName)}
+            </div>
+            {/* Optional subtle online indicator dot */}
+            <span className="absolute bottom-0 right-0 w-3 h-3 bg-success border-2 border-base-100 rounded-full"></span>
+          </div>
 
-            <h3 className="font-semibold text-base-content">
+          {/* Details */}
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <h3 className="font-bold text-base-content truncate transition-colors duration-300 group-hover:text-primary tracking-tight">
               {contact.fullName}
             </h3>
-
-            <p className="text-sm text-base-content opacity-70">
+            <p className="text-xs text-base-content/60 truncate transition-all duration-300 group-hover:text-base-content/80">
               {contact.email}
             </p>
-
-            <p className="text-sm font-medium text-base-content">
+            <p className="text-xs font-semibold text-base-content/50 mt-0.5 tracking-wide">
               {contact.mobileNumber}
             </p>
-
           </div>
         </div>
       ))}
-
     </div>
   );
 };

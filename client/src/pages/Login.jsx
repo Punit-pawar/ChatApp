@@ -83,51 +83,58 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
-      <div className="w-full max-w-md">
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md transform transition-all duration-500 hover:scale-[1.01]">
+        {/* Glassmorphism Card */}
+        <div className="card bg-base-100/90 backdrop-blur-md shadow-2xl border border-base-content/5">
+          <div className="card-body p-8">
             {/* Header */}
-            <h2 className="card-title text-3xl justify-center text-primary">
-              Login
-            </h2>
-            <p className="text-center text-base-content/70 mb-6">
-              Welcome back 👋
-            </p>
+            <div className="text-center mb-6">
+              <h2 className="text-4xl font-extrabold bg-primary bg-clip-text text-transparent inline-block pb-1">
+                Welcome Back
+              </h2>
+              <p className="text-base-content/70 flex items-center justify-center gap-2 mt-2 font-medium">
+                We're glad to see you again 
+              </p>
+            </div>
 
             {/* Form */}
             <form
               onSubmit={handleSubmit}
               onReset={handleClearForm}
-              className="space-y-4"
+              className="space-y-5"
             >
-              <input
-                type="email"
-                name="email"
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={Loading}
-                required
-                className="input input-bordered w-full"
-              />
+              <div className="relative group">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email address"
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={Loading}
+                  required
+                  className="input input-bordered w-full transition-all duration-300 focus:ring-2 focus:ring-primary/40 focus:border-primary group-hover:border-primary/50 bg-base-100"
+                />
+              </div>
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={Loading}
-                required
-                className="input input-bordered w-full"
-              />
+              <div className="relative group">
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  disabled={Loading}
+                  required
+                  className="input input-bordered w-full transition-all duration-300 focus:ring-2 focus:ring-primary/40 focus:border-primary group-hover:border-primary/50 bg-base-100"
+                />
+              </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-4 pt-2">
                 <button
                   type="reset"
                   disabled={Loading}
-                  className="btn btn-secondary btn-outline flex-1"
+                  className="btn btn-outline flex-1 transition-all duration-300 hover:bg-base-200 hover:-translate-y-1 hover:shadow-md"
                 >
                   Clear
                 </button>
@@ -135,43 +142,53 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={Loading}
-                  className="btn btn-primary flex-1"
+                  className="btn border-none bg-primary text-white flex-1 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                 >
-                  {Loading ? "Logging in..." : "Login"}
+                  {Loading ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
               </div>
             </form>
 
-            {/* Google Login button */}
+            {/* Divider */}
+            <div className="divider text-xs text-base-content/40 my-6 font-semibold tracking-widest uppercase">
+              Or continue with
+            </div>
 
-            <div className="mt-4">
+            {/* Google Login button */}
+            <div>
               {error ? (
                 <button
-                  className="btn btn-outline btn-error font-sans flex items-center justify-center gap-2 w-full"
+                  className="btn btn-outline btn-error font-sans flex items-center justify-center gap-3 w-full opacity-80"
                   disabled
                 >
-                  <FcGoogle className="text-xl" />
+                  <FcGoogle className="text-2xl" />
                   {error}
                 </button>
               ) : (
                 <button
                   onClick={GoogleLogin}
-                  className="btn btn-outline font-sans flex items-center justify-center gap-2 w-full"
+                  className="btn btn-outline bg-base-100 hover:bg-base-200 font-sans flex items-center justify-center gap-3 w-full transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                   disabled={!isInitialized || isLoading}
                 >
-                  <FcGoogle className="text-xl" />
-                  {isLoading
-                    ? "Loading..."
-                    : isInitialized
-                      ? "Continue with Google"
-                      : "Google Auth Error"}
+                  <FcGoogle className="text-2xl" />
+                  {isLoading ? (
+                    <span className="loading loading-dots loading-sm"></span>
+                  ) : isInitialized ? (
+                    "Google"
+                  ) : (
+                    "Google Auth Error"
+                  )}
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        <p className="text-center text-sm text-base-content/60 mt-6">
+        <p className="text-center text-sm text-base-content/60 mt-8 transition-opacity hover:opacity-100 opacity-70">
           Your data is safe with us 🔐
         </p>
       </div>

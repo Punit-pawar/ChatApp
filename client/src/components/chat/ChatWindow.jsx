@@ -24,7 +24,7 @@ const DummyChatData = [
   { senderId: 2, receiverId: 1, message: "Let's discuss it in the evening then." },
 ];
 
-const ChatWindow = ({ receiver, setReceiver }) => {
+const ChatWindow = ({ receiver }) => {
   const bottomRef = useRef(null);
 
   const [messages, setMessages] = useState([]);
