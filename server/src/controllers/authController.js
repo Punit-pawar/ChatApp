@@ -1,3 +1,4 @@
+import { generateToken } from "../config/authToken.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 
@@ -6,35 +7,33 @@ export const UserRegister = async (req, res, next) => {
   try {
     const { fullName, email, mobileNumber, password } = req.body;
 
-    console.log(req.body);
-
     if (!fullName || !email || !mobileNumber || !password) {
       const error = new Error("All fields required");
       error.statusCode = 400;
       return next(error);
     }
 
+    // check if user already exists
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
       const error = new Error("Email already exists");
       error.statusCode = 400;
       return next(error);
     }
 
+    // hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     await User.create({
-      fullName: fullName,   // ✅ match schema
-      email: email,
-      phone: mobileNumber,  // ✅ match schema
+      fullName,
+      email,
+      mobileNumber,
       password: hashedPassword,
+      userType: "regular",
     });
 
-    res.status(201).json({
-      message: "Registration successful",
-    });
+    res.status(201).json({ message: "Registration successful" });
   } catch (error) {
     next(error);
   }
@@ -76,6 +75,9 @@ export const UserLogin = async (req, res, next) => {
       return next(error);
     }
 
+    // Generate token and set cookie
+    generateToken(existingUser._id, res);
+    
     res.status(200).json({
       message: "Login successful",
       data: existingUser,
@@ -100,7 +102,7 @@ export const GoogleUserLogin = async (req, res, next) => {
       if (existingUser.userType === "regular") {
         console.log("pink");
         existingUser.userType = "hybrid";
-        existingUser.googleId = await bcrypt.hash(id, salt);
+        existingUser.googleId = bcrypt.hash(id, salt);
         await existingUser.save();
       } else {
         console.log("green");
@@ -116,7 +118,7 @@ export const GoogleUserLogin = async (req, res, next) => {
       const hashGoogleID = await bcrypt.hash(id, salt);
 
       const newUser = await User.create({
-        name,
+        fullName: name,
         email,
         googleId: hashGoogleID,
         userType: "google",
@@ -125,6 +127,8 @@ export const GoogleUserLogin = async (req, res, next) => {
     }
 
     //genrate login token if requred
+
+    generateToken(existingUser._id, res);
     res.status(200).json({
       message: "Login successful",
       data: existingUser,

@@ -1,19 +1,178 @@
 import User from "../models/userModel.js";
+import Message from "../models/messageModel.js";
+
+
+// ================= GET ALL USERS =================
+
 export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
 
-    // const currentUser = req.user;
-    // if (!currentUser) {
-    //   const error = new Error("Unauthorized");
-    //   error.statusCode = 401;
-    //   return next(error);
-    // }
+    const currentUser = req.user;
 
-    // const filteredUsers = users.filter(
-    //   (user) => user._id.toString() !== currentUser._id.toString(),
-    // );
-    res.status(200).json({ data: users });
+    if (!currentUser) {
+      const error = new Error("Unauthorized");
+      error.statusCode = 401;
+      return next(error);
+    }
+
+    const myId = currentUser.id || currentUser._id;
+
+    const users = await User.find().select("-password");
+
+    const filteredUsers = users.filter(
+      (user) =>
+        user._id.toString() !== myId?.toString()
+    );
+
+    res.status(200).json({
+      data: filteredUsers,
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+// ================= UPDATE PROFILE =================
+
+export const updateProfile = async (req, res, next) => {
+  try {
+
+    const currentUser = req.user;
+
+    if (!currentUser) {
+      const error = new Error("Unauthorized");
+      error.statusCode = 401;
+      return next(error);
+    }
+
+    const myId = currentUser.id || currentUser._id;
+
+    const { fullName, email, mobileNumber } = req.body;
+
+    // check email duplicate
+    if (email) {
+      const existingUser = await User.findOne({
+        email,
+        _id: { $ne: myId },
+      });
+
+      if (existingUser) {
+        const error = new Error("Email already in use");
+        error.statusCode = 400;
+        return next(error);
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      myId,
+      {
+        ...(fullName && { fullName }),
+        ...(email && { email }),
+        ...(mobileNumber !== undefined && { mobileNumber }),
+      },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      data: updatedUser,
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+// ================= FETCH MESSAGES =================
+
+export const fetchMessages = async (req, res, next) => {
+  try {
+
+    const currentUser = req.user;
+
+    if (!currentUser) {
+      const error = new Error("Unauthorized");
+      error.statusCode = 401;
+      return next(error);
+    }
+
+    const senderId =
+      currentUser.id || currentUser._id;
+
+    const receiverId = req.params.receiverId;
+
+    const verifyReceiver =
+      await User.findById(receiverId);
+
+    if (!verifyReceiver) {
+      const error = new Error("Unknown Receiver");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    const mychat = await Message.find({
+      $or: [
+        { senderId, receiverId },
+        { senderId: receiverId, receiverId: senderId },
+      ],
+    })
+      .sort({ createdAt: 1 });
+
+    res.status(200).json({
+      data: mychat,
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+// ================= SEND MESSAGE =================
+
+export const sendMessage = async (req, res, next) => {
+  try {
+
+    const currentUser = req.user;
+
+    if (!currentUser) {
+      const error = new Error("Unauthorized");
+      error.statusCode = 401;
+      return next(error);
+    }
+
+    const senderId =
+      currentUser.id || currentUser._id;
+
+    const receiverId = req.params.receiverId;
+
+    const { inputMessage } = req.body;
+
+    const verifyReceiver =
+      await User.findById(receiverId);
+
+    if (!verifyReceiver) {
+      const error = new Error("Unknown Receiver");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    const newMessage = await Message.create({
+      senderId,
+      receiverId,
+      message: inputMessage,
+    });
+
+    res.status(201).json({
+      data: newMessage,
+    });
+
   } catch (error) {
     next(error);
   }

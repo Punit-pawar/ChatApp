@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const NavBar = () => {
+  const { user, isLogin } = useAuth();
   const [theme, setTheme] = useState("light");
+
   const navigate = useNavigate();
 
   const handleThemeChange = (event) => {
@@ -19,57 +22,49 @@ const NavBar = () => {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 bg-base-100/80 backdrop-blur-lg border-b border-base-content/10 px-6 py-4 transition-all duration-500 shadow-sm">
+    <nav className="bg-primary px-6 py-3 shadow-md">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
-        
         {/* Logo */}
-        <h1
-          onClick={() => navigate("/")}
-          className="text-3xl font-black tracking-tight cursor-pointer bg-primary bg-clip-text text-transparent drop-shadow-sm transition-all duration-300 hover:scale-[1.03] hover:-rotate-1"
-        >
-          ChatVerse
+        <h1 className="text-2xl font-extrabold tracking-wide cursor-pointer">
+          Data-Transfer
         </h1>
 
         {/* Links */}
-        <div className="hidden md:flex items-center gap-8 font-semibold text-base-content/80 text-sm tracking-wide">
-          <span
-            onClick={() => navigate("/")}
-            className="cursor-pointer relative group transition-colors duration-300 hover:text-primary"
-          >
-            Home
-            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary transition-all duration-300 group-hover:w-full rounded-full"></span>
-          </span>
-
-          <span
-            onClick={() => navigate("/about")}
-            className="cursor-pointer relative group transition-colors duration-300 hover:text-primary"
-          >
-            About
-            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary transition-all duration-300 group-hover:w-full rounded-full"></span>
-          </span>
+        <div className="hidden md:flex gap-6 text-sm font-medium">
+          <Link to="/chatting"> Chat </Link>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-4">
-          
-          <button
-            className="btn btn-ghost btn-sm px-4 transition-all duration-300 hover:bg-primary/10 hover:text-primary hover:scale-105 active:scale-95"
-            onClick={() => navigate("/login")}
-          >
-            Login
-          </button>
+        <div className="flex items-center gap-3">
+          {isLogin ? (
+            <div
+              className="flex items-center gap-3 cursor-pointer p-1 border border-primary hover:border-primary-content rounded-md transition"
+              onClick={() => navigate("/userDashboard")}
+            >
+              <span className="text-nowrap text-lg font-semibold">
+                Welcome,{" "}
+                {user?.fullName.split(" ")[0] || user?.email.split("@")[0]}
+              </span>
+            </div>
+          ) : (
+            <>
+              <button
+                className="btn-secondary1"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
 
-          <button
-            className="btn btn-sm px-6 border-none bg-primary text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 active:scale-95"
-            onClick={() => navigate("/register")}
-          >
-            Register
-          </button>
-
-          <div className="h-6 w-[1px] bg-base-content/20 mx-1 hidden sm:block"></div>
-
+              <button
+                className="btn btn-outline btn-sm px-5"
+                onClick={() => navigate("/register")}
+              >
+                Register
+              </button>
+            </>
+          )}
           <select
-            className="select select-bordered select-sm bg-base-100/50 min-w-[130px] font-medium transition-all duration-300 cursor-pointer hover:bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+            className="select select-bordered select-sm max-w-32"
             onChange={handleThemeChange}
             value={theme}
           >
@@ -91,7 +86,6 @@ const NavBar = () => {
             <option value="soft">Soft</option>
             <option value="valorant">Valorant</option>
           </select>
-
         </div>
       </div>
     </nav>
