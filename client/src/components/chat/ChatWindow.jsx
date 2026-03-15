@@ -6,31 +6,33 @@ import socketAPI from "../../config/WebSocket";
 
 const ChatWindow = ({ receiver }) => {
   const { user } = useAuth();
+
   const bottomRef = useRef(null);
 
-  const senderId = user?._id || 1; // Replace with actual logged-in user ID
-  const receiverId = receiver?._id || 2; // Replace with actual receiver ID
+  // ✅ SAFE IDs
+  const senderId = user?._id || user?.id;
+  const receiverId = receiver?._id || receiver?.id;
 
   const [messages, setMessages] = useState([]);
-
   const [inputMessage, setInputMessage] = useState("");
 
+  // ================= SCROLL =================
+
   const scrolltoBottom = () => {
-   // console.log(bottomRef);
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
-  //On Every New Message
   useEffect(() => {
     scrolltoBottom();
   }, [messages]);
 
-  const handleKeyDown = (e) => {
-    e.key === "Enter" && handleSend();
-  };
+  // ================= SEND =================
 
   const handleSend = async () => {
-    //call Backend
+    if (!inputMessage) return;
+    if (!receiverId) return;
 
     const messagePacket = {
       senderId,
@@ -43,40 +45,63 @@ const ChatWindow = ({ receiver }) => {
     try {
       if (socketAPI.connected) {
         socketAPI.emit("send", messagePacket);
-        setInputMessage("");
+
         setMessages((prev) => [
           ...prev,
-          { ...messagePacket, createdAt: timestamp, updatedAt: timestamp },
+          {
+            ...messagePacket,
+            createdAt: timestamp,
+          },
         ]);
+
+        setInputMessage("");
       }
     } catch (error) {
       console.log(error);
-      toast.error(error?.response?.data?.message || "Message Sending Failed");
+      toast.error("Message Sending Failed");
     }
   };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  };
+
+  // ================= FETCH OLD =================
 
   const fetchAllOldMessage = async () => {
     try {
-      const res = await api.get(`/user/fetchMessages/${receiverId}`);
-      setMessages(res.data.data);
+      if (!receiverId) return;
+
+      const res = await api.get(
+        `/user/fetchMessages/${receiverId}`
+      );
+
+      setMessages(res.data.data || []);
     } catch (error) {
       console.log(error);
-      toast.error(error?.response?.data?.message || "Error Fetching Messages");
+      toast.error("Error Fetching Messages");
     }
   };
 
-  const handleReceiveMessage = (newMessagePack) => {
-    // console.log(newMessagePack);
-    setMessages((prev) => [...prev, newMessagePack]);
+  // ================= RECEIVE =================
+
+  const handleReceiveMessage = (msg) => {
+    setMessages((prev) => [...prev, msg]);
   };
 
-  //on component Load
+  // ================= LOAD ON RECEIVER CHANGE =================
+
   useEffect(() => {
     setMessages([]);
-    if (receiver) {
+
+    if (receiverId) {
       fetchAllOldMessage();
     }
-  }, [receiver]);
+  }, [receiverId]);
+
+  // ================= SOCKET =================
 
   useEffect(() => {
     socketAPI.on("receive", handleReceiveMessage);
@@ -84,9 +109,9 @@ const ChatWindow = ({ receiver }) => {
     return () => {
       socketAPI.off("receive", handleReceiveMessage);
     };
-  }, [receiverId, handleReceiveMessage]);
+  }, []);
 
-
+  // ================= NO RECEIVER =================
 
   if (!receiver) {
     return (
@@ -98,69 +123,83 @@ const ChatWindow = ({ receiver }) => {
     );
   }
 
-  console.log("messages = ", messages);
+  // ================= UI =================
 
   return (
-    <>
-      <div className="p-2 h-full">
-        <div className="border rounded-lg h-full p-2">
-          <div className="bg-primary p-3 rounded-lg mb-2">
-            <h2 className="text-lg font-bold text-primary-content">
-              {receiver.fullName}
-            </h2>
-          </div>
+    <div className="p-2 h-full">
+      <div className="border rounded-lg h-full p-2">
 
-          <div className="h-4/5 overflow-y-auto p-2 border rounded-lg bg-accent/30">
-            {/* Chat messages will go here */}
-            {messages.length > 0 ? (
-              messages.map((chat, idx) => (
-                <div
-                  key={idx}
-                  className={`chat ${chat.senderId === receiverId ? "chat-receiver" : "chat-sender"}`}
-                >
-                  <div className="chat-header text-base-content">
-                    {chat.senderId === receiverId
-                      ? receiver.fullName
-                      : user.fullName}
-                  </div>
-                  <div className="chat-bubble">{chat.message}</div>
-                </div>
-              ))
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                {" "}
-                Loading Chats ...
-              </div>
-            )}
+        {/* HEADER */}
 
-            {/* Dummy div to scroll to bottom */}
-            <div ref={bottomRef} />
-          </div>
-
-          <div className="mt-2 flex gap-2">
-            <input
-              type="text"
-              value={inputMessage}
-              placeholder="Type your message..."
-              className="input input-bordered w-full"
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            <button
-              className="btn btn-primary disabled:bg-secondary"
-              onClick={handleSend}
-              disabled={inputMessage === ""}
-            >
-              Send
-            </button>
-          </div>
-
-          <div className="text-center text-sm text-base-content/60 mt-1">
-            Powered by <span className="font-bold">ChatAppFSD45</span>
-          </div>
+        <div className="bg-primary p-3 rounded-lg mb-2">
+          <h2 className="text-lg font-bold text-primary-content">
+            {receiver.fullName}
+          </h2>
         </div>
+
+        {/* CHAT */}
+
+        <div className="h-4/5 overflow-y-auto p-2 border rounded-lg bg-accent/30">
+
+          {messages.length > 0 ? (
+            messages.map((chat, idx) => (
+              <div
+                key={idx}
+                className={`chat ${
+                  chat.senderId === senderId
+                    ? "chat-end"
+                    : "chat-start"
+                }`}
+              >
+                <div className="chat-header">
+                  {chat.senderId === senderId
+                    ? user?.fullName
+                    : receiver?.fullName}
+                </div>
+
+                <div className="chat-bubble">
+                  {chat.message}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              No messages
+            </div>
+          )}
+
+          <div ref={bottomRef} />
+        </div>
+
+        {/* INPUT */}
+
+        <div className="mt-2 flex gap-2">
+          <input
+            type="text"
+            value={inputMessage}
+            placeholder="Type your message..."
+            className="input input-bordered w-full"
+            onChange={(e) =>
+              setInputMessage(e.target.value)
+            }
+            onKeyDown={handleKeyDown}
+          />
+
+          <button
+            className="btn btn-primary"
+            onClick={handleSend}
+            disabled={!inputMessage}
+          >
+            Send
+          </button>
+        </div>
+
+        <div className="text-center text-sm text-base-content/60 mt-1">
+          Powered by <b>ChatAppFSD45</b>
+        </div>
+
       </div>
-    </>
+    </div>
   );
 };
 
