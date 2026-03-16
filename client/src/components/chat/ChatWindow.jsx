@@ -195,7 +195,7 @@ const ChatWindow = ({ receiver }) => {
         </div>
 
         <div className="text-center text-sm text-base-content/60 mt-1">
-          Powered by <b>ChatAppFSD45</b>
+          Powered by <b>ChatApp</b>
         </div>
 
       </div>
