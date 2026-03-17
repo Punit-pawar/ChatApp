@@ -1,22 +1,32 @@
 import jwt from "jsonwebtoken";
-import User from "../models/userModel.js";
 
-export const Protect = (req, res, next) => {
+const Protect = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    const auth = req.headers.authorization;
 
-    if (!token) {
-      const error = new Error("Unauthorized");
-      error.statusCode = 401;
-      throw error;
+    if (!auth) {
+      return res.status(401).json({
+        message: "No token",
+      });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const token = auth.split(" ")[1];
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
 
     req.user = decoded;
 
     next();
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    console.log("Auth error:", err);
+
+    res.status(401).json({
+      message: "Unauthorized",
+    });
   }
 };
+
+export default Protect;

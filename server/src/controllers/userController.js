@@ -90,45 +90,40 @@ export const updateProfile = async (req, res, next) => {
 
 // ================= FETCH MESSAGES =================
 
-export const fetchMessages = async (req, res, next) => {
+export const fetchMessages = async (req, res) => {
   try {
+    const senderId = req.user?._id;
+    const receiverId = req.params.id;
 
-    const currentUser = req.user;
-
-    if (!currentUser) {
-      const error = new Error("Unauthorized");
-      error.statusCode = 401;
-      return next(error);
+    if (!senderId || !receiverId) {
+      return res.status(400).json({
+        message: "Missing ids",
+      });
     }
 
-    const senderId =
-      currentUser.id || currentUser._id;
-
-    const receiverId = req.params.receiverId;
-
-    const verifyReceiver =
-      await User.findById(receiverId);
-
-    if (!verifyReceiver) {
-      const error = new Error("Unknown Receiver");
-      error.statusCode = 404;
-      return next(error);
-    }
-
-    const mychat = await Message.find({
+    const messages = await Message.find({
       $or: [
-        { senderId, receiverId },
-        { senderId: receiverId, receiverId: senderId },
+        {
+          senderId: senderId,
+          receiverId: receiverId,
+        },
+        {
+          senderId: receiverId,
+          receiverId: senderId,
+        },
       ],
-    })
-      .sort({ createdAt: 1 });
+    }).sort({ createdAt: 1 });
 
     res.status(200).json({
-      data: mychat,
+      success: true,
+      data: messages,
     });
-
   } catch (error) {
-    next(error);
+    console.log("fetchMessages error:", error);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
   }
 };
 

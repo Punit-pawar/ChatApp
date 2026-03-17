@@ -16,7 +16,11 @@ router.get("/allUsers", Protect, getAllUsers);
 router.put("/profile", Protect, updateProfile);
 
 // fetch all old Messages between 2 users
-router.get("/fetchMessages/:receiverId", Protect, fetchMessages);
+router.get(
+  "/fetchMessages/:id",
+  Protect,
+  fetchMessages
+);
 
 // send new Messages between 2 users
 router.post("/sendMessage/:receiverId", Protect, sendMessage);
