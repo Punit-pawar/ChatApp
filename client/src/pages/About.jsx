@@ -94,7 +94,6 @@ const About = () => {
             <span className="badge badge-accent badge-lg">Express</span>
             <span className="badge badge-info badge-lg">MongoDB</span>
             <span className="badge badge-success badge-lg">TailwindCSS</span>
-            <span className="badge badge-warning badge-lg">DaisyUI</span>
 
           </div>
         </motion.div>
@@ -110,7 +109,7 @@ const About = () => {
             <div className="card-body">
 
               <h2 className="text-2xl font-bold text-primary">
-                Built by Developers
+                Built by Punit pawar
               </h2>
 
               <p className="text-base-content/70">
