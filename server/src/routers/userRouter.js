@@ -5,7 +5,7 @@ import {
   fetchMessages,
   sendMessage,
 } from "../controllers/userController.js";
-import { Protect } from "../middleware/authMiddleware.js";
+import Protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 

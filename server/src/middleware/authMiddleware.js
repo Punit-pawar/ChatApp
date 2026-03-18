@@ -2,15 +2,21 @@ import jwt from "jsonwebtoken";
 
 const Protect = async (req, res, next) => {
   try {
-    const auth = req.headers.authorization;
+    let token = req.cookies?.token;
 
-    if (!auth) {
+    // Fallback to Bearer token if not in cookies
+    if (!token) {
+      const auth = req.headers.authorization;
+      if (auth && auth.startsWith("Bearer ")) {
+        token = auth.split(" ")[1];
+      }
+    }
+
+    if (!token) {
       return res.status(401).json({
         message: "No token",
       });
     }
-
-    const token = auth.split(" ")[1];
 
     const decoded = jwt.verify(
       token,

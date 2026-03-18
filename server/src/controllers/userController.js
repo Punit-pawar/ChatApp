@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import Message from "../models/messageModel.js";
+import mongoose from "mongoose";
 
 
 // ================= GET ALL USERS =================
@@ -92,13 +93,19 @@ export const updateProfile = async (req, res, next) => {
 
 export const fetchMessages = async (req, res) => {
   try {
-    const senderId = req.user?._id;
+    const senderId = req.user?.id || req.user?._id;
     const receiverId = req.params.id;
 
     if (!senderId || !receiverId) {
       return res.status(400).json({
         message: "Missing ids",
       });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(senderId) || !mongoose.Types.ObjectId.isValid(receiverId)) {
+       return res.status(400).json({
+         message: "Invalid ID format: one or both IDs are not valid ObjectIds",
+       });
     }
 
     const messages = await Message.find({
@@ -122,7 +129,8 @@ export const fetchMessages = async (req, res) => {
     console.log("fetchMessages error:", error);
 
     res.status(500).json({
-      message: "Server Error",
+      message: "Server Error: " + error.message,
+      stack: error.stack
     });
   }
 };

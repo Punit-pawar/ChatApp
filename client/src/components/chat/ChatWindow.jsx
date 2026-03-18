@@ -43,7 +43,7 @@ const ChatWindow = ({ receiver }) => {
     const timestamp = new Date().toISOString();
 
     try {
-      if (socketAPI.connected) {
+      if (socketAPI) {
         socketAPI.emit("send", messagePacket);
 
         setMessages((prev) => [
@@ -81,7 +81,7 @@ const ChatWindow = ({ receiver }) => {
       setMessages(res.data.data || []);
     } catch (error) {
       console.log(error);
-      toast.error("Error Fetching Messages");
+      toast.error(error?.response?.data?.message || "Error Fetching Messages");
     }
   };
 
