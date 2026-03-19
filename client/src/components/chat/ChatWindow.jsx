@@ -177,7 +177,7 @@ const ChatWindow = ({ receiver }) => {
           <input
             type="text"
             value={inputMessage}
-            placeholder="Type your message..."
+            placeholder="Type your message...."
             className="input input-bordered w-full"
             onChange={(e) =>
               setInputMessage(e.target.value)
