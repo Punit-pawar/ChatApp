@@ -186,7 +186,7 @@ const Register = () => {
         </div>
 
         <p className="text-center text-sm text-base-content/60 mt-6">
-          We respect your privacy 🔒
+          We respect your privacy 
         </p>
       </div>
     </div>

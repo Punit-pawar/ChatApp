@@ -96,7 +96,7 @@ const Login = () => {
               Login
             </h2>
             <p className="text-center text-base-content/70 mb-6">
-              Welcome back 👋
+              Welcome back 
             </p>
 
             {/* Form */}
@@ -176,7 +176,7 @@ const Login = () => {
         </div>
 
         <p className="text-center text-sm text-base-content/60 mt-6">
-          Your data is safe with us 🔐
+          Your data is safe with us 
         </p>
       </div>
     </div>
