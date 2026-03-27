@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import api from "../../config/api";
 import socketAPI from "../../config/WebSocket";
 import { GoDotFill } from "react-icons/go";
+import { motion, AnimatePresence } from "framer-motion";
 
 const DummyRecentContact = [
   {
@@ -77,32 +78,35 @@ const ContactBar = ({ fetchMode, setReceiver }) => {
           </p>
         )}
 
-        {contacts?.map((contact) => (
-          <div
-            key={contact._id || contact.id}
-            className="p-2 bg-accent hover:bg-primary transition-colors rounded-lg cursor-pointer"
-            onClick={() => setReceiver(contact)}
-          >
-            <h3 className="font-semibold flex justify-between">
-
-              {contact.fullName}
-
-              {onlineUsers?.[contact._id] && (
-                <GoDotFill className="text-green-400" />
-              )}
-
-            </h3>
-
-            <p className="text-sm">
-              {contact.email}
-            </p>
-
-            <p className="text-sm font-bold">
-              {contact.mobileNumber}
-            </p>
-
-          </div>
-        ))}
+        <AnimatePresence>
+          {contacts?.map((contact, index) => (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05 }}
+              whileHover={{ scale: 1.02, backgroundColor: "var(--primary)", borderColor: "transparent", color: "var(--primary-content)" }}
+              whileTap={{ scale: 0.98 }}
+              key={contact._id || contact.id}
+              className="p-2 bg-accent/40 border border-transparent transition-colors rounded-lg cursor-pointer"
+              onClick={() => setReceiver(contact)}
+            >
+              <h3 className="font-semibold flex justify-between">
+                {contact.fullName}
+                {onlineUsers?.[contact._id] && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="flex justify-center items-center"
+                  >
+                    <GoDotFill className="text-green-400" />
+                  </motion.div>
+                )}
+              </h3>
+              <p className="text-sm opacity-80">{contact.email}</p>
+              <p className="text-sm font-bold opacity-90">{contact.mobileNumber}</p>
+            </motion.div>
+          ))}
+        </AnimatePresence>
 
       </div>
     </div>
